@@ -1,0 +1,100 @@
+#include "Trainstatus.h"
+#include <algorithm>
+
+void Trainstatus::readInfo() {
+	Datafile newData("TrainMap.txt", "TrainStations.txt", "Trains.txt");
+	//newData.readTrainMap();
+	newData.readTrainStation();
+	newData.readTrains();
+
+	//newData.printStatInfo();
+	//newData.printTrainInfo();
+
+	statVec = newData.getStationVec();
+	tagVec = newData.getTagVec();
+
+	vector<Tag*>::iterator begin = tagVec.begin(), end = tagVec.end(), it;
+	for (it = begin; it != end; it++) {
+		tryAssemble(*it);
+	}
+}
+/*
+bool compById(Ralsfordon* a, Ralsfordon* b)
+{
+	return a->getId() < b->getId();
+}
+*/
+
+bool Trainstatus::tryAssemble(Tag* currTrain) {
+	bool success = false;
+	vector<Station*>::iterator begin = statVec.begin(), end = statVec.end(), it;
+
+	list<string> currList;
+	currList = currTrain->getLocigList();
+
+	list<Ralsfordon*> currStatPool;
+	int newCount = 0;
+	list<string>::iterator libegin = currList.begin(), liend = currList.end(), liIt;
+
+	for (it = begin; it != end; it++) {
+		if ((*it)->getStationName() == currTrain->getStart()) {
+			currStatPool = (*it)->getStationPool();
+		}
+	}
+	cout << "Storlek på poolen före :" << currStatPool.size() << endl;
+	cout << currTrain->getStart();
+			list<Ralsfordon*>::iterator poolBegin = currStatPool.begin(), poolEnd = currStatPool.end(), poolIter;
+			currStatPool.sort([](Ralsfordon * lhs, Ralsfordon * rhs) {return lhs->getId() < rhs->getId();});
+			for (liIt = libegin; liIt != liend; liIt++) {
+				for (poolIter = poolBegin; poolIter != poolEnd; poolIter++) {
+					if (*liIt == (*poolIter)->getTyp() && newCount <= currList.size()) {
+						//cout << "vagn found!" << endl;						
+						//cout << currTrain->getTagnummer();
+						
+						currTrain->addFordon((*poolIter));
+						++poolIter;
+						currStatPool.erase(poolIter--);						
+						newCount++;
+						//success = true;
+						break;
+						
+						
+					}
+					else success = false;
+				}
+
+			}
+			if (currTrain->getFordonList().size() != currList.size()) {
+				cout << "Train assembly fail" << endl;
+				success = false;
+			}
+
+			cout << "\nFordonlist" << endl;
+			cout << "Tågnummer: " << currTrain->getTagnummer() << endl;
+			list<Ralsfordon*> fordonList = currTrain->getFordonList();
+			list<Ralsfordon*>::iterator fordBegin = fordonList.begin(), fordEnd = fordonList.end(), fordIter;
+			for (fordIter = fordBegin; fordIter != fordEnd; fordIter++) {
+				cout << (*fordIter)->getTyp() << endl;
+				
+			}
+			cout << "- Logical list" << endl;
+			for (liIt = libegin; liIt != liend; liIt++) {
+				cout << (*liIt) << endl;
+			}
+			
+				cout << "Storlek på poolen efter :" << currStatPool.size() << endl;
+				for (it = begin; it != end; it++) {
+					if ((*it)->getStationName() == currTrain->getStart()) {
+						(*it)->updatePool(currStatPool);
+						cout << (*it)->getStationPool().size();
+					}
+				}
+			
+			return true;
+		
+
+	
+	
+}
+
+

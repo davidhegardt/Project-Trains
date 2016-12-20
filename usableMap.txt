@@ -1,0 +1,14 @@
+void Trainmap::createMap(string avg,string ank, int dist) {
+	vector<string> tempVec;
+	tempVec.push_back(avg);
+	tempVec.push_back(ank);
+	to_string(dist);
+	stationMap.insert(make_pair(tempVec, dist));
+	
+	for (map<vector<string>, int>::iterator it = stationMap.begin();
+		it != stationMap.end(); ++it) {
+		cout << it->first.at(0) << it->first.at(1) << it->second << endl;
+	}
+
+		
+}

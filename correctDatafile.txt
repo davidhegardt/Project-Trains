@@ -1,0 +1,204 @@
+#include "Datafile.h"
+#include "Trainbuilder.h"
+#include <string>
+#include <fstream>
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+void Datafile::readTrainMap() {
+	trainmapFile = "TrainMap.txt";
+	Trainmap theMap;
+	/*
+	vector<string> store;
+	
+
+	ifstream inFile(trainmapFile);
+	istream_iterator<string> in_iter(inFile);
+	istream_iterator<string> eof;
+
+	while (in_iter != eof) {
+		store.push_back(*in_iter++);
+	}
+
+	inFile.close();
+
+	for (auto i : store) {
+		cout << i << endl;
+	}
+	*/
+	ifstream inFile(trainmapFile);
+
+	string avg;
+	string ank;
+	int dist;
+	cout << "\n Testwrite \n" << endl;
+	while (inFile >> avg >> ank >> dist) {
+		theMap.createMap(avg, ank, dist);
+		
+	}
+	theMap.printMap();
+}
+
+void Datafile::readTrainStation() {
+	trainmapFile = "TrainStations.txt";
+	ifstream inFile(trainmapFile);
+	
+	string stName1,stName2,stName3,stName4,stName5,stName6;
+	char par1 = '(';
+	char par2 = ')';
+	int id = 0;
+	
+	int typ = 0;
+	int param0 = 0;
+	int param1 = 0;
+	Ralsfordon *rals;
+	Sovvagn *sov;
+	//inFile >> rals;
+	string tmpString;
+	vector<string> statName;
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+			addToStation(rals);
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+			addToStation(rals);
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+			addToStation(rals);
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+			addToStation(rals);
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		while (inFile.peek() != '\n') {
+			inFile >> rals;
+			addToStation(rals);
+		}
+		inFile >> stName1;
+		setStationName(stName1);
+		createStation();
+		for (int i = 0; i < 104; i++) {
+			inFile >> rals;
+			addToStation(rals);
+		}
+			
+			
+		
+	
+	inFile.close();
+}
+
+void Datafile::createStation() {
+	string statName = getStationName();
+
+	Station *aStation = new Station(statName);
+
+	statVec.push_back(aStation);
+}
+
+void Datafile::readTrains() {
+	trainsFile = "Trains.txt";
+
+	ifstream inFile(trainsFile);
+	int trainId;
+	string avg;
+	string ank;
+	inFile >> trainId;
+	inFile >> avg;
+	inFile >> ank;
+
+
+}
+
+std::ifstream &operator >> (std::ifstream & is, Ralsfordon *&v) {
+	int id, type, par1, par2 = 0;
+	while (is.peek() == ' ' || is.peek() == '(')
+		is.ignore();
+	is >> id >> type >> par1;
+	
+	if (is.peek() != ')') {
+		is >> par2;
+	}
+	
+	is.get();
+	v = Trainbuilder::createFordon(id, type, par1, par2);
+	return is;
+}
+
+void Datafile::addToStation(Ralsfordon* fordon) {
+	string whichStation = getStationName();
+	vector<Station*>::iterator begin = statVec.begin(), end = statVec.end(), it;				// Create iterator of type T, loop through and print through iteration
+	for (it = begin; it != end; it++) {
+		if ((*it)->getStationName() == whichStation) {
+			(*it)->addToPool(fordon);
+
+		}
+	}
+}
+
+void Datafile::createFordon(int pId,int pTyp, int pPar1, int pPar2) {
+	
+	if (pTyp == 0) {
+		Sittvagn *sitt = new Sittvagn(pId, "Sittvagn", pPar1, pPar2);
+		addToStation(sitt);
+	}
+	else if (pTyp == 1) {
+		Sovvagn *sov = new Sovvagn(pId, "Sovvagn", pPar1);
+		addToStation(sov);
+	}
+	else if (pTyp == 2) {
+		Opengodsvagn *open = new Opengodsvagn(pId, "Open Godsvagn", pPar1, pPar2);
+		addToStation(open);
+	}
+	else if (pTyp == 3) {
+		Closedgodsvagn *closed = new Closedgodsvagn(pId, "Closed Godsvagn", pPar1);
+		addToStation(closed);
+	}
+	else if (pTyp == 4) {
+		Ellok *el = new Ellok(pId, "El-Lok", pPar1, pPar2);
+		addToStation(el);
+	}
+	else if (pTyp == 5) {
+		Diesellok *diesel = new Diesellok(pId, "Diesel-lok", pPar1, pPar2);
+		addToStation(diesel);
+	}
+}
+
+void Datafile::printStatInfo() {
+	vector<Station*>::iterator begin = statVec.begin(), end = statVec.end(), it;				// Create iterator of type T, loop through and print through iteration
+	for (it = begin; it != end; it++) {
+		(*it)->printInfo();
+	}
+}

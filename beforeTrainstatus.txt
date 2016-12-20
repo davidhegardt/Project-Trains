@@ -1,0 +1,196 @@
+#include "Trainstatus.h"
+#include <algorithm>
+
+void Trainstatus::readInfo() {
+	Datafile newData("TrainMap.txt", "TrainStations.txt", "Trains.txt");
+	newData.readTrainStation();
+	newData.readTrains();
+	newData.readTrainMap();
+	newMap = newData.getTrainMap();
+
+	statVec = newData.getStationVec();
+	tagVec = newData.getTagVec();
+
+	for (auto i : statVec) {																				// Loopa samtliga stationer innan hopsättning
+		list<Ralsfordon*> allFordon;
+		allFordon = (i)->getStationPool();																	// Hämta stationspool
+		list<Ralsfordon*>::iterator begin = allFordon.begin(), end = allFordon.end(), it;					// Använd iterator och loopa fordonspool
+		for (it = begin; it != end; it++) {
+			makeHist(*it);																					// Anropa historik-funktion
+		}
+	}
+
+	vector<Tag*>::iterator begin = tagVec.begin(), end = tagVec.end(), it;
+	for (it = begin; it != end; it++) {
+		if (tryAssemble(*it)) {
+			cout << "Tåg " << (*it)->getTagnummer() << " redo att köra" << endl;
+			(*it)->setTillstand(ASSEMBLED);
+			findFordon();
+			running(*it);
+			findFordon();
+			arrived(*it);
+			findFordon();
+			finishUp(*it);
+			findFordon();
+		}
+		else {
+			cout << "Tåg " << (*it)->getTagnummer() << " Inte redo att köra" << endl;
+			
+		}
+	}
+}
+
+
+bool Trainstatus::tryAssemble(Tag* currTrain) {
+	bool assembled = true;
+	int tagId = currTrain->getTagnummer();														// Hämta tågnummer
+	string avg = currTrain->getStart();															// Hämta avgångsstation
+	Ralsfordon *v;
+	list<string> ingFordon = currTrain->getLocigList();											// Hämta lista på ingående fordon i tåg
+
+	list<string>::iterator begin = ingFordon.begin(), end = ingFordon.end(), listit;			// Skapa iterator för ing fordon
+	cout << "Tåg nummer :" << currTrain->getTagnummer() << endl;
+	for (listit = begin; listit != end; listit++) {												// Loopa lista på ingående fordon
+		for (auto i : statVec) {																// Loopa stationsvector
+			if ((i)->getStationName() == avg) {													// Om station == avgångstation
+				
+				if ((i)->checkAvail(*listit)) {													// Kolla att ledigt fordon finns
+					v = (i)->getFordon(*listit);												// Anropa funktion för att hämta fordon från station
+					v->setLocation("Tåg " + to_string(currTrain->getTagnummer()));				// uppdatera location
+					makeHist(v);
+					currTrain->addFordon(v);													// Lägg till fordon till tåget
+					(i)->addTrain(currTrain);													// Lägg till tåg till stationen
+				}
+				else {
+					cout << "Påkoppling misslyckades!" << endl;
+					currTrain->setTillstand(INCOMPLETE);										// Om rätt fordon inte finns på stationen, ändra tillstånd
+					Time delay;
+					delay.setMinutes(10);														// Ange försening
+					currTrain->changeTime(delay);												// ändra till const
+					assembled = false;															// om påkoppling misslyckas, sätt till false
+					
+				}
+			}
+		}
+	
+	}
+	
+	
+	return assembled;																			// returnera om lyckade eller ej
+	
+}
+
+
+void Trainstatus::ready(Tag* currTrain) {
+
+	cout << "Tåg nummer : " << currTrain->getTagnummer() << "Redo för avgång från " << currTrain->getStart();
+
+	currTrain->setTillstand(READY);
+}
+
+void Trainstatus::running(Tag* currTrain) {
+	//cout << "Tid " << theSim->getTime() << ": ";
+
+	for (auto i : statVec) {
+		if ((i)->getStationName() == currTrain->getStart()) {
+			//(i)->printInfo();
+			if ((i)->remTrain(currTrain->getTagnummer())) {
+				cout << "Tåg med tågnummer " << currTrain->getTagnummer() << " har lämnat " << currTrain->getStart();
+			}
+			//(i)->printInfo();
+		}
+	}
+
+	cout << " och kör mot " << currTrain->getDest() << endl;
+	
+	
+	double speed = newMap.calcAvgSpeed(currTrain->getStart(), currTrain->getDest(), currTrain->getStartTime(), currTrain->getDestTime());
+	cout << "Medelhastighet : " << speed << " km/h" << endl;
+	currTrain->setTillstand(RUNNING);
+}
+
+void Trainstatus::arrived(Tag* currTrain) {
+	//cout << "Tid " << theSim->getTime() << ": ";
+	cout << "Tåg " << currTrain->getTagnummer() << " från " << currTrain->getStart() <<
+		" har anlänt vid " << currTrain->getDest() << endl;
+
+	currTrain->setTillstand(ARRIVED);
+}
+
+void Trainstatus::finishUp(Tag* currTrain) {
+	string dest = currTrain->getDest();																	// Ta fram destination för tåget
+	// hitta stationen
+	for (auto i : statVec) {
+		if ((i)->getStationName() == dest) {															// Kolla att stationsnamn = destination
+			(i)->addTrain(currTrain);																	// Lägg till tåg till station
+			list<Ralsfordon*> fordonList;																// Skapa pekare till fordonslista
+			fordonList = currTrain->getFordonList();													// Ta fram fordonslista för tåget
+
+			list<Ralsfordon*>::iterator begin = fordonList.begin(), end = fordonList.end(), listit;		// Skapa iterator för fordonslistan
+			for (listit = begin; listit != end; listit++) {
+				(*listit)->setLocation(currTrain->getDest());											// Ändra location för alla fordon
+				makeHist(*listit);
+				(i)->addToPool(*listit);																// Lägg till fordon till stationspool
+			}
+			currTrain->clearList();																		// Rensa ingående fordon
+			currTrain->setTillstand(FINISHED);															// Ändra tillstånd
+			cout << "Tåg " << currTrain->getTagnummer() << " från " << currTrain->getStart() <<
+				" har lämnat ralsfordon till " << currTrain->getDest() << endl;
+		}
+	}
+}
+
+void Trainstatus::findFordon() {
+	int fordonId = 2;														// Ändra till inparameter
+	bool found = false;
+	Ralsfordon* foundFordon;
+	list<Ralsfordon*> statList;
+	for (auto i : statVec) {
+
+		statList = (i)->getStationPool();
+		auto it = find_if(statList.begin(), statList.end(), [=](Ralsfordon* m) {return m->getId() == fordonId;});
+		if (it != statList.end()) {
+			foundFordon = (*it);
+			found = true;
+		}
+	}
+
+	list<Ralsfordon*> tagList;
+	for (auto i : tagVec) {
+
+		tagList = (i)->getFordonList();
+		auto it = find_if(tagList.begin(), tagList.end(), [=](Ralsfordon* m) {return m->getId() == fordonId;});
+		if (it != tagList.end()) {
+			foundFordon = (*it);
+			found = true;
+		}
+	}
+	
+	if (found == true) {
+		cout << "Fordon id: " << foundFordon->getId() << endl;
+		cout << "Historik :";
+		readHist(foundFordon->getId());
+		cout << "\nBefinner sig på : " << foundFordon->getLocation() << endl;
+		cout << foundFordon->getTyp() << endl;
+	}
+	else if (found == false) {
+		cout << fordonId << " Kan inte hittas!" << endl;
+	}
+}
+
+void Trainstatus::makeHist(Ralsfordon* currTrain) {
+	vector<string> tempVec;
+	tempVec.push_back(currTrain->getLocation());
+	tempVec.push_back(currTrain->getTyp());
+	histMap.insert(make_pair(currTrain->getId(),tempVec ));
+}
+
+void Trainstatus::readHist(int id) {
+
+	typedef multimap<int, vector<string>>::const_iterator mapIT;
+	pair<mapIT, mapIT> range = histMap.equal_range(id);
+
+	for (auto it = range.first; it != range.second; ++it) {
+		cout << it->second.at(0) << " -> ";
+	}
+}

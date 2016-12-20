@@ -1,0 +1,158 @@
+#include "Datafile.h"
+#include <string>
+#include <fstream>
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+void Datafile::readTrainMap() {
+	trainmapFile = "TrainMap.txt";
+	Trainmap theMap;
+	/*
+	vector<string> store;
+	
+
+	ifstream inFile(trainmapFile);
+	istream_iterator<string> in_iter(inFile);
+	istream_iterator<string> eof;
+
+	while (in_iter != eof) {
+		store.push_back(*in_iter++);
+	}
+
+	inFile.close();
+
+	for (auto i : store) {
+		cout << i << endl;
+	}
+	*/
+	ifstream inFile(trainmapFile);
+
+	string avg;
+	string ank;
+	int dist;
+	cout << "\n Testwrite \n" << endl;
+	while (inFile >> avg >> ank >> dist) {
+		theMap.createMap(avg, ank, dist);
+		
+	}
+	theMap.printMap();
+}
+
+void Datafile::readTrainStation() {
+	trainmapFile = "TrainStations.txt";
+	ifstream inFile(trainmapFile);
+	
+	string stName1,stName2,stName3,stName4,stName5,stName6;
+	char par1 = '(';
+	char par2 = ')';
+	int id = 0;
+	
+	int typ = 0;
+	int param0 = 0;
+	int param1 = 0;
+	Ralsfordon *rals;
+	Sovvagn *sov;
+	//inFile >> rals;
+	string tmpString;
+	inFile >> stName1;
+	cout << stName1;		
+	while (inFile.peek() != '\n') {
+		inFile >> rals;
+	}
+	inFile >> stName2;
+	cout << stName2 << endl;
+	while (inFile.peek() != '\n') {
+		inFile >> rals;
+	}
+	inFile >> stName3;
+	cout << stName3 << endl;
+	while (inFile.peek() != '\n') {
+		inFile >> rals;
+	}
+	inFile >> stName4;
+	cout << stName4 << endl;
+	while (inFile.peek() != '\n') {
+		inFile >> rals;
+	}
+	
+	
+	inFile.close();
+}
+
+void Datafile::readTrains() {
+	trainsFile = "Trains.txt";
+
+	ifstream inFile(trainsFile);
+	int trainId;
+	string avg;
+	string ank;
+	inFile >> trainId;
+	inFile >> avg;
+	inFile >> ank;
+	
+
+/*
+	Time avgTid;
+	int h1;
+	int m1;
+	int h2;
+	int m2;
+	char mid = ':';
+	Time ankTid;
+	int maxSpeed;
+	int fordon1;
+	int fordon2;
+	int fordon3;
+	int fordon4;
+*/
+
+	
+}
+
+/*
+istream &operator >> (istream &is, Ralsfordon* &rals)
+{
+	char par1 = '(';
+	char par2 = ')';
+	int id = 0;
+
+	int typ = 0;
+	int param0 = 0;
+	int param1 = 0;
+	if (is >> par1 >> id >> typ >> param0 >> param1 >> par2) {
+		cout << par1 << id << typ << param0 << param1 << par2;
+	}
+	return is;
+}
+
+istream &operator >> (istream &is, Sovvagn* &rals)
+{
+	char par1 = '(';
+	char par2 = ')';
+	int id = 0;
+	char space = ' ';
+
+	int typ = 0;
+	int param0 = 0;
+	if (is >> par1 >> id >> typ >> param0 >> par2) {
+		cout << par1 << id << typ << param0 << par2;
+	}
+	return is;
+}
+*/
+
+std::ifstream &operator >> (std::ifstream & is, Ralsfordon *&v) {
+	int id, type, par1, par2 = 0;
+	while (is.peek() == ' ' || is.peek() == '(')
+		is.ignore();
+	is >> id >> type >> par1;
+	if (is.peek() != ')') {
+		is >> par2;
+	}
+	is.get();
+	cout << "hit";
+	return is;
+}

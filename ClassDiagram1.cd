@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="Datafile">
+    <Position X="5" Y="5.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAEAEQIgAgABAAACAAAQEAAAAAAACAAEiAHAAIEAA=</HashCode>
+      <FileName>Datafile.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Trainbuilder">
+    <Position X="5.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABCAAAACAAAAAAAAQAAA=</HashCode>
+      <FileName>Trainbuilder.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Trainmap">
+    <Position X="7.25" Y="0.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAgAAAAAAAAAAEAIEAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Trainmap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Station">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AQAAAAAQAAAARgAAGCAAEAEAQgAAAgAAAAAAQAAAAAA=</HashCode>
+      <FileName>Station.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tag">
+    <Position X="9" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAADAAIoAgAAQAAASgAAiKBAEiDIigAAAgBSIgQiA=</HashCode>
+      <FileName>Tag.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="STATUS">
+    <Position X="11.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQAAAAAAAAAAAAAAAAgAAAABQIAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Tag.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

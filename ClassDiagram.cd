@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ralsfordon">
+    <Position X="7.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAAEAAAAAAAACAACAAACACAAIAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Ralsfordon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Personvagn" Collapsed="true">
+    <Position X="3.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAgAAAAAAAAkAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Personvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sittvagn">
+    <Position X="5.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAgAAAAAAAIgAAAAAIgAAAAAAgAAAAA=</HashCode>
+      <FileName>Personvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sovvagn">
+    <Position X="1.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAQAAEAgAABAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Personvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Dragandefordon" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAQACSAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Dragandefordon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ellok">
+    <Position X="9" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAECAAAAACAAAAAAAAAAAAAAAAAAAAAAACEA=</HashCode>
+      <FileName>Dragandefordon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Diesellok">
+    <Position X="5.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAABAAAACAAAAACAAAAAAAAgAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Dragandefordon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Godsvagn" Collapsed="true">
+    <Position X="12.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAACAABAAAAAAIAAAAEAA=</HashCode>
+      <FileName>Godsvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Opengodsvagn">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAACAAAAAAAAAAAAACAABAAAACBIAAAAAAA=</HashCode>
+      <FileName>Godsvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Closedgodsvagn">
+    <Position X="11.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgCCAABAAAACAIAAAAAAA=</HashCode>
+      <FileName>Godsvagn.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

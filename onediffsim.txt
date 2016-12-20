@@ -1,0 +1,151 @@
+/*
+File:         Simulation.cpp
+Objective:    Implementation of class Simulation
+
+*/
+
+
+#include "Simulation.h"
+#include "Event.h"
+#include "SimConst.h"
+
+void Simulation::run(int mins) {
+	int korTill = currentTime + mins;
+	if (korTill >= SIM_TIME) {
+		korTill = SIM_TIME;
+	}
+
+	while (!eventQueue.empty()) {
+		Event * nextEvent = eventQueue.top();
+			eventQueue.pop();
+			currentTime = nextEvent->getTime();
+			nextEvent->processEvent();
+			getRunning();
+			getDone();
+			getDelayed();
+			getAll();
+			delete nextEvent;
+		
+		if (nextEvent->getTime() >= SIM_TIME) {
+			cout << "Done trains" << doneTrains.size() << endl;
+			cout << "Running trains" << runTrains.size() << endl;
+			if (doneTrains.size() == runTrains.size()) {
+				currentTime = korTill;
+				break;
+
+			}
+		}
+		/*		else {
+		// här ?
+
+
+		// eller här ?
+		} */
+	}
+	currentTime = korTill;
+	filter();
+	cout << "Done trains" << doneTrains.size() << endl;
+	cout << "Running trains" << runTrains.size() << endl;
+	cout << "Incomplete trains" << allTrains.size() << endl;
+	cout << "Delayed trains" << lateTrains.size() << endl;	
+	cout << "Tågen som aldrig kom fram:" << endl;
+	for (auto i : allTrains) {
+		cout << i->getTagnummer() << endl;
+	}
+	cout << "\nFörsenade tåg:";
+	for (auto i : lateTrains) {
+		cout << i->getTagnummer() << endl;
+	}
+
+}
+
+void Simulation::scheduleEvent(Event * newEvent) {
+	eventQueue.push(newEvent);
+}
+
+void addtoTrain(Event *e) {
+	e->getStatus();
+}
+
+bool Simulation::compare() {
+	if (doneTrains.size() == 116) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void Simulation::getRunning() {
+	Event * nextEvent = eventQueue.top();
+	if (nextEvent->getTyp() == "Runningevent") {
+		Tag *endTrain = nextEvent->getTag();
+		if (endTrain->getTillstand() == READY)
+		runTrains.push_back(endTrain);
+	}
+}
+
+void Simulation::getDone() {
+	Event * nextEvent = eventQueue.top();
+	if (nextEvent->getTyp() == "Finishevent") {
+		Tag *endTrain = nextEvent->getTag();
+		if (endTrain->getTillstand() == ARRIVED)
+		doneTrains.push_back(endTrain);
+	}
+}
+
+void Simulation::getAll() {
+	Event * nextEvent = eventQueue.top();
+	Tag *endTrain = nextEvent->getTag();
+	if (endTrain->getTillstand() == INCOMPLETE) {
+		allTrains.push_back(endTrain);
+	}
+	sort(allTrains.begin(), allTrains.end());
+	allTrains.erase(unique(allTrains.begin(), allTrains.end()), allTrains.end());
+}
+
+void Simulation::getDelayed() {
+	Event * nextEvent = eventQueue.top();
+	if (nextEvent->getTyp() == "Finishevent") {
+		Tag *endTrain = nextEvent->getTag();
+		Time compTime;
+		compTime.setHour(0);
+		compTime.setMinutes(0);
+		if (compTime < endTrain->getDelay()) {
+			lateTrains.push_back(endTrain);
+		}
+	}
+	sort(lateTrains.begin(), lateTrains.end());
+	lateTrains.erase(unique(lateTrains.begin(), lateTrains.end()), lateTrains.end());
+}
+
+void Simulation::filter() {
+	for (auto i : lateTrains) {
+		auto it = remove_if(allTrains.begin(), allTrains.end(), [=](Tag* m) {return m->getTagnummer() == i->getTagnummer();});
+	}
+	sort(allTrains.begin(), allTrains.end());
+	allTrains.erase(unique(allTrains.begin(), allTrains.end()), allTrains.end());
+}
+
+bool Simulation::getRunarrived() {
+	bool test = false;
+	int count = 0;
+	Event * nextEvent = eventQueue.top();
+	Trainstatus *status = nextEvent->getStatus();
+
+	vector<Tag*> *trainVec = status->getTagVec();
+
+	vector<Tag*> runTrain;
+	for (auto i : *trainVec) {
+		runTrain.push_back(i);
+	}
+
+	if (all_of(trainVec->begin(), trainVec->end(), [](Tag* i) {return i->getTillstand() != RUNNING || i->getTillstand() != ARRIVED ;})) {
+		cout << "Alla tåg har kommit fram";
+		test = true;
+		system("pause");
+	}
+
+
+	return test;
+}
